@@ -53,7 +53,7 @@ Bu işlemden sonra GitHub sayfanızı yenilediğinizde dosyalarınızın orada o
    - **Branch:** `main`
    - **Runtime:** `Python 3`
    - **Build Command:** `pip install -r requirements.txt` (Otomatik gelmeli)
-   - **Start Command:** `gunicorn run:app` (Otomatik gelmeli, gelmezse elle yazın)
+   - **Start Command:** `gunicorn app:app` (Otomatik gelmeli, gelmezse elle yazın)
    - **Plan Type:** `Free` (Ücretsiz)
 
 ## 4. Adım: Ortam Değişkenleri (Environment Variables)
