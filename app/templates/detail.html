@@ -1,0 +1,483 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Detail Page Container */
+    .detail-container {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    /* Panels */
+    .organic-panel {
+        background: var(--white);
+        border: 1px solid rgba(107, 142, 35, 0.1);
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+    }
+
+    /* Left Panel - Images */
+    .image-panel {
+        flex: 1;
+        min-width: 300px;
+        padding: 1.5rem;
+    }
+
+    .main-image-container {
+        height: 500px;
+        background: #F9F9F9;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .main-image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.4s ease;
+    }
+
+    /* Thumbnails */
+    .thumbnails-container {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .thumbnail {
+        cursor: pointer;
+        min-width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        background: #F0F0F0;
+    }
+
+    .thumbnail:hover,
+    .thumbnail.active {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Right Panel - Details */
+    .details-panel {
+        flex: 1;
+        min-width: 300px;
+        padding: 2.5rem;
+        position: relative;
+    }
+
+    /* Typography */
+    .product-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        font-family: 'Playfair Display', serif;
+        line-height: 1.2;
+    }
+
+    .model-code {
+        color: var(--accent-color);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+
+    .model-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding-bottom: 1.5rem;
+    }
+
+    .section-header {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .product-description {
+        color: var(--text-dark);
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        font-size: 1.05rem;
+        opacity: 0.9;
+    }
+
+    /* Features Grid */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .feature-tag {
+        background: rgba(107, 142, 35, 0.05);
+        border: 1px solid rgba(107, 142, 35, 0.2);
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .feature-tag:hover {
+        background: rgba(107, 142, 35, 0.1);
+        border-color: var(--primary-color);
+    }
+
+    .feature-key {
+        color: var(--accent-color);
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .feature-value {
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    /* Buttons */
+    .edit-btn {
+        background: var(--white);
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        padding: 0.6rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .edit-btn:hover {
+        background: var(--primary-color);
+        color: var(--white);
+    }
+
+    .edit-btn i {
+        margin-right: 6px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: none;
+        gap: 10px;
+        margin-top: 2rem;
+    }
+
+    .action-buttons.active {
+        display: flex;
+    }
+
+    .btn-save,
+    .btn-cancel {
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-save {
+        background: var(--primary-color);
+        color: var(--white);
+        box-shadow: 0 4px 10px rgba(107, 142, 35, 0.2);
+    }
+
+    .btn-cancel {
+        background: #E0E0E0;
+        color: var(--text-dark);
+    }
+
+    .btn-save:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel:hover {
+        background: #D0D0D0;
+    }
+
+    /* Form Controls in Edit Mode */
+    .form-control {
+        background: var(--white);
+        border: 1px solid #ccc;
+        color: var(--text-dark);
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(107, 142, 35, 0.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .detail-container {
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 2rem;
+        }
+
+        .model-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .edit-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- Detail Container -->
+<div class="detail-container">
+
+    <!-- Left Panel: Image Gallery -->
+    <div class="organic-panel image-panel">
+        <div class="image-gallery">
+            <div class="main-image-container">
+                {% if front_img %}
+                <img id="mainImage" src="{{ url_for('main.uploaded_file', filename=front_img.image_filename) }}"
+                    alt="{{ item.name }}"
+                    onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/placeholder.svg') }}';">
+                {% elif item.images %}
+                <img id="mainImage" src="{{ url_for('main.uploaded_file', filename=item.images[0].image_filename) }}"
+                    alt="{{ item.name }}"
+                    onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/placeholder.svg') }}';">
+                {% else %}
+                <div style="text-align: center; color: #ccc;">
+                    <i class="fas fa-leaf" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p>Görsel Yok</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="thumbnails-container">
+                {% for img in item.images %}
+                <div class="thumbnail"
+                    onclick="changeMainImage('{{ url_for('main.uploaded_file', filename=img.image_filename) }}')">
+                    <img src="{{ url_for('main.uploaded_file', filename=img.image_filename) }}"
+                        onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/placeholder.svg') }}';">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel: Product Details -->
+    <div class="organic-panel details-panel">
+        <!-- Product Title -->
+        <h1 id="item-name" class="product-title">{{ item.name }}</h1>
+
+        <div class="model-header">
+            <div class="model-code">MODEL KODU: #{{ item.id }}</div>
+
+            <!-- Edit Button -->
+            {% if current_user.is_authenticated %}
+            <button id="edit-btn" onclick="toggleEditMode()" class="edit-btn">
+                <i class="fas fa-edit"></i> Düzenle
+            </button>
+            {% endif %}
+        </div>
+
+        <!-- Description Section -->
+        <div style="margin-bottom: 2rem;">
+            <h3 class="section-header">Doğal Dokunuş</h3>
+            <p id="item-description" class="product-description">{{ item.description }}</p>
+        </div>
+
+        <!-- Features Section -->
+        <div style="margin-bottom: 2rem;">
+            <h3 class="section-header">Özellikler</h3>
+            <div id="features-container" class="features-grid">
+                {% for feature in item.features %}
+                <div class="feature-tag" data-feature-id="{{ feature.id }}">
+                    <span class="feature-key">{{ feature.key }}</span>
+                    <span class="feature-value">{{ feature.value | title }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div id="edit-actions" class="action-buttons">
+            <button onclick="saveChanges()" class="btn-save">
+                <i class="fas fa-save"></i> Kaydet
+            </button>
+            <button onclick="cancelEdit()" class="btn-cancel">
+                <i class="fas fa-times"></i> İptal
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Image gallery function
+    function changeMainImage(imageSrc) {
+        const mainImage = document.getElementById('mainImage');
+        if (mainImage) {
+            mainImage.style.opacity = '0';
+            setTimeout(() => {
+                mainImage.src = imageSrc;
+                mainImage.style.transition = 'opacity 0.3s ease';
+                mainImage.style.opacity = '1';
+            }, 150);
+        }
+    }
+
+    // Edit mode variables
+    let editMode = false;
+    let originalData = {};
+
+    function toggleEditMode() {
+        editMode = !editMode;
+        const editBtn = document.getElementById('edit-btn');
+        const editActions = document.getElementById('edit-actions');
+        const itemName = document.getElementById('item-name');
+        const itemDescription = document.getElementById('item-description');
+        const featuresContainer = document.getElementById('features-container');
+
+        if (editMode) {
+            editBtn.style.display = 'none';
+            editActions.classList.add('active');
+
+            // Save original data
+            originalData.name = itemName.textContent;
+            originalData.description = itemDescription.textContent.trim();
+            originalData.features = [];
+
+            // Convert Name to Input
+            itemName.innerHTML = `<input type="text" value="${originalData.name}" id="name-input" class="form-control" style="font-size: 2rem; font-family: 'Playfair Display', serif; width: 100%;">`;
+
+            // Convert Description to Textarea
+            itemDescription.innerHTML = `<textarea id="description-input" class="form-control" style="min-height: 150px; width: 100%;">${originalData.description}</textarea>`;
+
+            // Convert Features to Inputs
+            const featureDivs = featuresContainer.querySelectorAll('div[data-feature-id]');
+            featureDivs.forEach(div => {
+                const featureId = div.getAttribute('data-feature-id');
+                const key = div.querySelector('.feature-key').textContent;
+                const value = div.querySelector('.feature-value').textContent;
+
+                originalData.features.push({ id: featureId, key: key, value: value });
+
+                div.innerHTML = `
+                    <input type="text" value="${key}" class="feature-key-input form-control" style="margin-bottom: 5px; font-size: 0.8rem; padding: 8px; width: 100%;" placeholder="Özellik Adı">
+                    <input type="text" value="${value}" class="feature-value-input form-control" style="padding: 8px; width: 100%;" placeholder="Değer">
+                `;
+            });
+        } else {
+            cancelEdit();
+        }
+    }
+
+    function cancelEdit() {
+        editMode = false;
+        document.getElementById('edit-btn').style.display = 'block';
+        document.getElementById('edit-actions').classList.remove('active');
+
+        // Restore original data if we have it
+        if (originalData.name) {
+            document.getElementById('item-name').textContent = originalData.name;
+            document.getElementById('item-description').textContent = originalData.description;
+
+            const featuresContainer = document.getElementById('features-container');
+            const featureDivs = featuresContainer.querySelectorAll('div[data-feature-id]');
+
+            featureDivs.forEach((div, index) => {
+                if (originalData.features[index]) {
+                    const feat = originalData.features[index];
+                    div.innerHTML = `
+                        <span class="feature-key">${feat.key}</span>
+                        <span class="feature-value">${feat.value}</span>
+                    `;
+                }
+            });
+        } else {
+            // Fallback if cancel called without edit mode init
+            location.reload();
+        }
+    }
+
+    function saveChanges() {
+        const itemId = "{{ item.id }}";
+        const newName = document.getElementById('name-input').value;
+        const newDescription = document.getElementById('description-input').value;
+
+        const features = [];
+        const featuresContainer = document.getElementById('features-container');
+        const featureDivs = featuresContainer.querySelectorAll('div[data-feature-id]');
+
+        featureDivs.forEach(div => {
+            const featureId = div.getAttribute('data-feature-id');
+            const key = div.querySelector('.feature-key-input').value;
+            const value = div.querySelector('.feature-value-input').value;
+            features.push({ id: featureId, key: key, value: value });
+        });
+
+        fetch('/item/' + itemId + '/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: newName,
+                description: newDescription,
+                features: features
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Kaydetme sırasında bir hata oluştu.');
+            });
+    }
+</script>
+{% endblock %}

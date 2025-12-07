@@ -1,0 +1,427 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Organic Upload Page */
+    .upload-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    /* Organic Panel */
+    .organic-panel {
+        background: var(--white);
+        border: 1px solid rgba(107, 142, 35, 0.1);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow:
+            0 10px 30px rgba(107, 142, 35, 0.1),
+            0 0 0 1px rgba(107, 142, 35, 0.05);
+    }
+
+    /* Page Title */
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin-bottom: 3rem;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .page-title i {
+        margin-right: 15px;
+        color: var(--primary-color);
+    }
+
+    /* Section Headers */
+    .section-header {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+        padding-bottom: 12px;
+        border-bottom: 2px solid rgba(107, 142, 35, 0.2);
+        font-family: 'Playfair Display', serif;
+    }
+
+    /* Form Groups */
+    .form-section {
+        margin-bottom: 3rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        color: var(--text-dark);
+        font-size: 0.9rem;
+        margin-bottom: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    /* Organic Inputs */
+    .organic-input {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        background: var(--bg-paper);
+        border: 1px solid #D2B48C;
+        border-radius: 10px;
+        color: var(--text-dark);
+        font-size: 1rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .organic-input:focus {
+        outline: none;
+        background: var(--white);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(107, 142, 35, 0.1);
+    }
+
+    .organic-input::placeholder {
+        color: rgba(62, 39, 35, 0.4);
+    }
+
+    textarea.organic-input {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    /* File Upload Areas */
+    .upload-zone {
+        background: rgba(107, 142, 35, 0.05);
+        border: 2px dashed rgba(107, 142, 35, 0.3);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .upload-zone:hover {
+        background: rgba(107, 142, 35, 0.1);
+        border-color: var(--primary-color);
+    }
+
+    .file-input {
+        width: 100%;
+        padding: 0.8rem;
+        background: var(--white);
+        border: 1px solid rgba(107, 142, 35, 0.2);
+        border-radius: 8px;
+        color: var(--text-dark);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .file-input:hover {
+        border-color: var(--primary-color);
+    }
+
+    /* Grid Layout for Images */
+    .image-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    /* AI Analyze Button */
+    .ai-button {
+        background: var(--primary-color);
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        color: var(--white);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(107, 142, 35, 0.2);
+    }
+
+    .ai-button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(107, 142, 35, 0.3);
+    }
+
+    .ai-button i {
+        margin-right: 8px;
+    }
+
+    /* AI Loading */
+    .ai-loading {
+        display: none;
+        color: var(--primary-color);
+        margin-left: 15px;
+        font-weight: 600;
+    }
+
+    /* AI Suggestions Box */
+    .ai-suggestions {
+        display: none;
+        margin-top: 1.5rem;
+        background: rgba(107, 142, 35, 0.05);
+        border: 1px solid rgba(107, 142, 35, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+
+    .ai-suggestions-title {
+        color: var(--primary-dark);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .ai-suggestions-title i {
+        margin-right: 8px;
+    }
+
+    .suggestion-item {
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        line-height: 1.6;
+    }
+
+    .suggestion-item strong {
+        color: var(--primary-color);
+    }
+
+    /* Apply Button */
+    .apply-button {
+        width: 100%;
+        padding: 1rem;
+        background: transparent;
+        border: 2px solid var(--primary-color);
+        border-radius: 12px;
+        color: var(--primary-color);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .apply-button:hover {
+        background: var(--primary-color);
+        color: var(--white);
+    }
+
+    /* Submit Button */
+    .submit-button {
+        width: 100%;
+        padding: 1.3rem;
+        background: var(--primary-color);
+        border: none;
+        border-radius: 50px;
+        color: var(--white);
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(107, 142, 35, 0.25);
+    }
+
+    .submit-button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(107, 142, 35, 0.35);
+    }
+
+    .submit-button i {
+        margin-right: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .organic-panel {
+            padding: 2rem 1.5rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .image-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Main Container -->
+<div class="upload-container">
+    <div class="organic-panel">
+        <h1 class="page-title">
+            <i class="fas fa-leaf"></i>Yeni Ürün Ekle
+        </h1>
+
+        <form method="POST" action="{{ url_for('items.upload') }}" enctype="multipart/form-data">
+
+            <!-- Temel Bilgiler -->
+            <div class="form-section">
+                <h3 class="section-header">Temel Bilgiler</h3>
+
+                <div class="form-group">
+                    <label class="form-label">Ürün Adı</label>
+                    <input type="text" name="name" class="organic-input" required
+                        placeholder="Örn: Organik Keten Gömlek">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Açıklama</label>
+                    <textarea name="description" class="organic-input" rows="4"
+                        placeholder="Ürün hakkında detaylı bilgi..."></textarea>
+                </div>
+            </div>
+
+            <!-- Görseller -->
+            <div class="form-section">
+                <h3 class="section-header">Görseller</h3>
+
+                <div class="upload-zone" style="margin-bottom: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Ön Görünüm (Zorunlu)</label>
+                        <input type="file" name="image_front" id="image_front" class="file-input" required
+                            accept="image/*">
+                    </div>
+                </div>
+
+                <div class="image-grid">
+                    <div class="upload-zone">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Arka Görünüm</label>
+                            <input type="file" name="image_back" class="file-input" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="upload-zone">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Yan Görünüm</label>
+                            <input type="file" name="image_side" class="file-input" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Özellikler & AI -->
+            <div class="form-section">
+                <h3 class="section-header">Özellikler</h3>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <button type="button" id="ai-analyze-btn" class="ai-button">
+                        <i class="fas fa-magic"></i>Yapay Zeka ile Analiz Et
+                    </button>
+                    <span id="ai-loading" class="ai-loading">
+                        <i class="fas fa-spinner fa-spin"></i> Analiz ediliyor...
+                    </span>
+                </div>
+
+                <div id="ai-suggestions" class="ai-suggestions">
+                    <strong class="ai-suggestions-title">
+                        <i class="fas fa-robot"></i>Analiz Sonuçları
+                    </strong>
+
+                    <div id="suggestion-container">
+                        <!-- Sonuçlar buraya gelecek -->
+                    </div>
+
+                    <button type="button" id="apply-suggestions" class="apply-button">
+                        <i class="fas fa-check"></i> Tüm Önerileri Uygula
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Etiketler (Virgülle ayırın)</label>
+                    <input type="text" name="features" id="features-input" class="organic-input"
+                        placeholder="renk:bej, kumaş:keten, tip:gömlek">
+                </div>
+            </div>
+
+            <button type="submit" class="submit-button">
+                <i class="fas fa-save"></i>Ürünü Kaydet
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('ai-analyze-btn').addEventListener('click', function () {
+        const fileInput = document.getElementById('image_front');
+        if (fileInput.files.length === 0) {
+            alert('Lütfen önce bir ön görünüm görseli seçin.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]);
+
+        document.getElementById('ai-loading').style.display = 'inline-block';
+        document.getElementById('ai-suggestions').style.display = 'none';
+
+        fetch("{{ url_for('items.analyze') }}", {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ai-loading').style.display = 'none';
+
+                if (data.error) {
+                    alert('Hata: ' + data.error);
+                    return;
+                }
+
+                const container = document.getElementById('suggestion-container');
+                container.innerHTML = '';
+
+                function addSuggestion(label, value) {
+                    if (!value) return;
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerHTML = `<strong>${label}:</strong> ${value}`;
+                    container.appendChild(div);
+                }
+
+                addSuggestion('Kategori', data.category);
+                addSuggestion('Renk', data.color);
+                if (data.details) addSuggestion('Detaylar', data.details.join(', '));
+                if (data.accessories) addSuggestion('Aksesuarlar', data.accessories.join(', '));
+
+                document.getElementById('ai-suggestions').style.display = 'block';
+                window.aiData = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('ai-loading').style.display = 'none';
+                alert('Bir hata oluştu.');
+            });
+    });
+
+    document.getElementById('apply-suggestions').addEventListener('click', function () {
+        if (!window.aiData) return;
+
+        const data = window.aiData;
+        let features = [];
+
+        if (data.category) features.push(`kategori:${data.category}`);
+        if (data.color) features.push(`renk:${data.color}`);
+        if (data.details) data.details.forEach(d => features.push(`detay:${d}`));
+        if (data.accessories) data.accessories.forEach(a => features.push(`aksesuar:${a}`));
+
+        const input = document.getElementById('features-input');
+        const currentVal = input.value.trim();
+        input.value = currentVal ? currentVal + ', ' + features.join(', ') : features.join(', ');
+
+        const descInput = document.querySelector('textarea[name="description"]');
+        if (!descInput.value.trim()) {
+            descInput.value = `${data.color} renkte, ${data.category}. ${data.details ? data.details.join(', ') + ' detaylı.' : ''}`;
+        }
+    });
+</script>
+{% endblock %}

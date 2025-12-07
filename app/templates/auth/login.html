@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Override base navbar for login page to be simpler or hidden if desired */
+    /* For this design, we'll keep the base navbar but ensure the page content is centered */
+
+    .auth-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Botanical Background Elements */
+    .botanical-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.1;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50 Q 60 20 80 40 T 90 80' stroke='%236B8E23' fill='none' stroke-width='2'/%3E%3Cpath d='M50 50 Q 40 80 20 60 T 10 20' stroke='%238B4513' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+        background-size: 200px 200px;
+    }
+
+    .login-card {
+        background: var(--white);
+        border-radius: 20px;
+        box-shadow:
+            0 10px 30px rgba(107, 142, 35, 0.1),
+            0 0 0 1px rgba(107, 142, 35, 0.05);
+        padding: 3rem;
+        width: 100%;
+        max-width: 450px;
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .auth-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        color: var(--primary-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+        color: var(--accent-color);
+        font-size: 0.9rem;
+        margin-bottom: 2.5rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+
+    .form-label {
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        background: var(--bg-paper);
+        border: 1px solid #D2B48C;
+        border-radius: 10px;
+        padding: 1rem 1.2rem;
+        font-size: 1rem;
+        color: var(--text-dark);
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .form-control:focus {
+        background: var(--white);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(107, 142, 35, 0.1);
+        outline: none;
+    }
+
+    .btn-login {
+        background: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: 50px;
+        padding: 1rem;
+        width: 100%;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        box-shadow: 0 4px 15px rgba(107, 142, 35, 0.2);
+    }
+
+    .btn-login:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(107, 142, 35, 0.3);
+    }
+
+    .auth-footer {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .auth-link {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .auth-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    .leaf-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="botanical-bg"></div>
+
+    <div class="login-card">
+        <i class="fas fa-leaf leaf-icon"></i>
+        <h1 class="auth-title">Giriş Yap</h1>
+        <p class="auth-subtitle">Doğal Stil Dünyasına Hoş Geldiniz</p>
+
+        <form action="{{ url_for('auth.login') }}" method="post">
+            <div class="form-group">
+                <label for="username" class="form-label">Kullanıcı Adı</label>
+                <input type="text" id="username" name="username" class="form-control" required autocomplete="username"
+                    placeholder="Kullanıcı adınız">
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Şifre</label>
+                <input type="password" id="password" name="password" class="form-control" required
+                    autocomplete="current-password" placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="btn-login">
+                Giriş Yap
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Hesabınız yok mu? <a href="{{ url_for('auth.register') }}" class="auth-link">Kayıt Ol</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
